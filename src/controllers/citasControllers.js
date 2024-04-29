@@ -43,6 +43,30 @@ async function crearCita(req, res) {
       res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: "Error al crear cita" });
     }
   }
+
+  async function obtenerfechas(req, res) {
+    const { Id_habitacion } = req.params; // Obtenemos el ID de la habitación de los parámetros de la solicitud
+    try {
+        // Crear una solicitud de base de datos
+        const request = pool.request();
+        request.input("Id_habitacion", sql.Int, Id_habitacion); // Establecer el ID de la habitación como parámetro
+        
+        // Ejecutar la consulta para obtener las fechas ocupadas
+        const result = await request.query(`
+            SELECT dtfechallegada, dtfechasalida
+            FROM tblreservacion
+            WHERE Id_habitacion = @Id_habitacion;
+        `);
+        
+        // Devolver las fechas ocupadas en el formato JSON
+        res.status(HTTP_STATUS.OK).json(result.recordset);
+    } catch (error) {
+        // Manejar errores
+        console.error("Error al obtener fechas ocupadas:", error);
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: "Error al obtener fechas ocupadas" });
+    }
+  }
+
   
   async function actualizarCita(req, res) {
     const { 
@@ -170,5 +194,6 @@ async function crearCita(req, res) {
     eliminarCita,
     obtenerCitas,
     obtenerCitaPorId,
+    obtenerfechas,
   };
   
