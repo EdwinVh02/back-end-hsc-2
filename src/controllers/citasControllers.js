@@ -53,19 +53,20 @@ async function crearCita(req, res) {
         
         // Ejecutar la consulta para obtener las fechas ocupadas
         const result = await request.query(`
-            SELECT dtfechallegada, dtfechasalida
+            SELECT CONVERT(DATE, dtfechallegada) AS dtfechallegada, CONVERT(DATE, dtfechasalida) AS dtfechasalida
             FROM tblreservacion
             WHERE Id_habitacion = @Id_habitacion;
         `);
         
-        // Devolver las fechas ocupadas en el formato JSON
-        res.status(HTTP_STATUS.OK).json(result.recordset);
+        // Devolver las fechas ocupadas en formato JSON
+        res.status(200).json(result.recordset);
     } catch (error) {
         // Manejar errores
         console.error("Error al obtener fechas ocupadas:", error);
-        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ error: "Error al obtener fechas ocupadas" });
+        res.status(500).json({ error: "Error al obtener fechas ocupadas" });
     }
-  }
+}
+
 
   
   async function actualizarCita(req, res) {
